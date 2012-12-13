@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    	<provider android:name=".lotto.BookProvider" android:authorities="com.androidbook.provider.BookProvider"/>
+    	<provider android:name=".lotto.LottoProvider" android:authorities="com.happyty.fortunelottery.provider.LottoProvider"/>
 	</application>
     
 
