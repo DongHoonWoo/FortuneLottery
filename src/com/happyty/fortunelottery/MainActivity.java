@@ -47,6 +47,13 @@ public class MainActivity extends Activity {
 				new LottoNumberSao().getLatestNumber();
 			}
 		});
+		Button bt2 = (Button)findViewById(R.id.getNumber);
+		bt2.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				new LottoNumberSao().getNumber(500);
+			}
+		});
 		return true;
 	}
 
