@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.happyty.fortunelottery.lotto.LottoProviderMetaData.LottoTableMetaData;
+import com.happyty.fortunelottery.util.T;
 
 public class LottoProvider extends ContentProvider {
 	private static final String TAG = LottoProvider.class.getSimpleName();
@@ -249,17 +250,17 @@ public class LottoProvider extends ContentProvider {
 		@Override
 		public void onCreate(SQLiteDatabase db)
 		{
-			Log.d(TAG, "inner oncreate called");
+			T.d("inner oncreate called : create table");
 			db.execSQL("CREATE TABLE " + LottoTableMetaData.TABLE_NAME + " ("
 				+ LottoTableMetaData._ID + " INTEGER PRIMARY KEY,"
 				+ LottoTableMetaData.NUMBER_OF_TIME + " INTEGER,"
 				+ LottoTableMetaData.DATE + " LONG,"
 				+ LottoTableMetaData.LUCKY_NUMBER_1 + " INTEGER,"
 				+ LottoTableMetaData.LUCKY_NUMBER_2 + " INTEGER,"
-				+ LottoTableMetaData.LUCKY_NUMBER_3 + " INTEGER"
-				+ LottoTableMetaData.LUCKY_NUMBER_4 + " INTEGER"
-				+ LottoTableMetaData.LUCKY_NUMBER_5 + " INTEGER"
-				+ LottoTableMetaData.LUCKY_NUMBER_6 + " INTEGER"
+				+ LottoTableMetaData.LUCKY_NUMBER_3 + " INTEGER,"
+				+ LottoTableMetaData.LUCKY_NUMBER_4 + " INTEGER,"
+				+ LottoTableMetaData.LUCKY_NUMBER_5 + " INTEGER,"
+				+ LottoTableMetaData.LUCKY_NUMBER_6 + " INTEGER,"
 				+ LottoTableMetaData.LUCKY_NUMBER_BONUS + " INTEGER"
 				+ ");");
 		}
@@ -267,8 +268,8 @@ public class LottoProvider extends ContentProvider {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
 		{
-			Log.d(TAG, "inner onupgrade called");
-			Log.w(TAG, "Upgrading database from version "
+			T.d("inner onupgrade called");
+			T.d("Upgrading database from version "
 				+ oldVersion + " to "
 				+ newVersion + ", which will destroy all old data");
 			db.execSQL("DROP TABLE IF EXISTS " +

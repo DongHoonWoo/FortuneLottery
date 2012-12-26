@@ -10,7 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +23,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.happyty.fortunelottery.lotto.LottoNumberSao;
+import com.happyty.fortunelottery.lotto.LottoProviderMetaData;
+import com.happyty.fortunelottery.util.T;
 
 public class MainActivity extends Activity {
 
@@ -36,7 +43,7 @@ public class MainActivity extends Activity {
 		load.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				loadLottoCSV();
+				initializeLottoDB();
 			}
 		});
 
@@ -55,6 +62,25 @@ public class MainActivity extends Activity {
 			}
 		});
 		return true;
+	}
+
+	private void initializeLottoDB() {
+		Uri uri = LottoProviderMetaData.LottoTableMetaData.CONTENT_URI;
+		try {
+			Cursor c = managedQuery(uri,
+				null, //projection
+				null, //selection string
+				null, //selection args array of strings
+				null); //sort order
+			if (c != null && c.moveToFirst()) {
+				T.d("lotto db =>" + c.getCount());
+			} else {
+				loadLottoCSV();
+			}
+		} catch (SQLException e) {
+			T.w(e.toString());
+			loadLottoCSV();
+		}
 	}
 
 	private void loadLottoCSV() {
@@ -100,7 +126,23 @@ public class MainActivity extends Activity {
 		n6 = Integer.parseInt(sep[7]);
 		bonus = Integer.parseInt(sep[8]);
 
-		Log.d("Lotto", "parse =>" + num
+		ContentValues cv = new ContentValues();
+		cv.put(LottoProviderMetaData.LottoTableMetaData.NUMBER_OF_TIME, num);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.DATE, date.getTime());
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_1, n1);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_2, n2);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_3, n3);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_4, n4);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_5, n5);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_6, n6);
+		cv.put(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_BONUS, bonus);
+
+		ContentResolver cr = getContentResolver();
+		Uri uri = LottoProviderMetaData.LottoTableMetaData.CONTENT_URI;
+		Uri insertedUri = cr.insert(uri, cv);
+		T.d("inserted uri:" + insertedUri);
+
+		T.d("parse =>" + num
 			+ "|" + date.toString()
 			+ "|" + n1
 			+ "|" + n2

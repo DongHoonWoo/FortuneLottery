@@ -29,7 +29,7 @@ public class LottoProviderMetaData implements BaseColumns {
 		public static final String CONTENT_ITEM_TYPE =
 				"vnd.android.cursor.item/vnd.fortunelottery.lotto";
 
-		public static final String DEFAULT_SORT_ORDER = "modified DESC";
+		public static final String DEFAULT_SORT_ORDER = "xth DESC";
 
 		//Additional Columns start here.
 		//int type
