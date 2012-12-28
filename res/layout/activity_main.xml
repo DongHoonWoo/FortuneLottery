@@ -19,6 +19,12 @@
         android:text="Load CSV" />
 
     <Button
+        android:id="@+id/getLottoDB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="getLottoDB" />
+    
+    <Button
         android:id="@+id/getLatest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

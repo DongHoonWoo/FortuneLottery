@@ -10,6 +10,7 @@ public class LottoNum {
 	private final static String[] BALL_NAMES = {"First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Bonus"};
 
 	private int xth;
+	private long drawDate;
 	private int luckyNumber1;
 	private int luckyNumber2;
 	private int luckyNumber3;
@@ -18,8 +19,9 @@ public class LottoNum {
 	private int luckyNumber6;
 	private int luckyNumberBonus;
 
-	public LottoNum(int xth, int num1, int num2, int num3, int num4, int num5, int num6, int bonus) {
+	public LottoNum(int xth, long time, int num1, int num2, int num3, int num4, int num5, int num6, int bonus) {
 		this.xth = xth;
+		this.drawDate = time;
 		this.luckyNumber1 = num1;
 		this.luckyNumber2 = num2;
 		this.luckyNumber3 = num3;

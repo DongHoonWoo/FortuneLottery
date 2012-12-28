@@ -24,6 +24,8 @@ import android.widget.Button;
 
 import com.happyty.fortunelottery.lotto.LottoNumberSao;
 import com.happyty.fortunelottery.lotto.LottoProviderMetaData;
+import com.happyty.fortunelottery.lotto.model.LottoNum;
+import com.happyty.fortunelottery.lotto.model.WinNumbers;
 import com.happyty.fortunelottery.util.T;
 
 public class MainActivity extends Activity {
@@ -61,7 +63,48 @@ public class MainActivity extends Activity {
 				new LottoNumberSao().getNumber(500);
 			}
 		});
+
+		Button bt3 = (Button)findViewById(R.id.getLottoDB);
+		bt3.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getLottoDB();
+			}
+		});
 		return true;
+	}
+
+	private void getLottoDB() {
+		Uri uri = LottoProviderMetaData.LottoTableMetaData.CONTENT_URI;
+		try {
+			Cursor c = managedQuery(uri,
+				null, //projection
+				null, //selection string
+				null, //selection args array of strings
+				null); //sort order
+
+			if (c == null) {
+				return;
+			}
+
+			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+				LottoNum num = new LottoNum(c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.NUMBER_OF_TIME))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.DATE))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_1))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_2))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_3))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_4))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_5))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_6))
+					, c.getInt(c.getColumnIndex(LottoProviderMetaData.LottoTableMetaData.LUCKY_NUMBER_BONUS)));
+				T.d(num.toString());
+				WinNumbers.getInstance().insertNumber(num.getXth(), num);
+			}
+		} catch (SQLException e) {
+			T.w(e.toString());
+		}
+
+		WinNumbers.getInstance().calculateNum();
 	}
 
 	private void initializeLottoDB() {
