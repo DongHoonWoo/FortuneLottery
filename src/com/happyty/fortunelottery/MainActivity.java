@@ -9,31 +9,52 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.happyty.fortunelottery.lotto.LottoNumberSao;
 import com.happyty.fortunelottery.lotto.LottoProviderMetaData;
+import com.happyty.fortunelottery.lotto.LottoResponse;
 import com.happyty.fortunelottery.lotto.model.LottoNum;
 import com.happyty.fortunelottery.lotto.model.WinNumbers;
 import com.happyty.fortunelottery.util.T;
 
 public class MainActivity extends Activity {
 
+	private TextView num01;
+	private TextView num02;
+	private TextView num03;
+	private TextView num04;
+	private TextView num05;
+	private TextView num06;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		num01 = (TextView)findViewById(R.id.num_01);
+		num02 = (TextView)findViewById(R.id.num_02);
+		num03 = (TextView)findViewById(R.id.num_03);
+		num04 = (TextView)findViewById(R.id.num_04);
+		num05 = (TextView)findViewById(R.id.num_05);
+		num06 = (TextView)findViewById(R.id.num_06);
 	}
 
 	@Override
@@ -53,7 +74,7 @@ public class MainActivity extends Activity {
 		bt1.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				new LottoNumberSao().getLatestNumber();
+				new RequestLotto().execute();
 			}
 		});
 		Button bt2 = (Button)findViewById(R.id.getNumber);
@@ -194,5 +215,69 @@ public class MainActivity extends Activity {
 			+ "|" + n5
 			+ "|" + n6
 			+ "|" + bonus);
+	}
+
+	private Drawable getNumberBg(int num) {
+		if (num >= 1 && num <= 10) {
+			return getResources().getDrawable(R.drawable.num_01);
+		} else if (num >= 11 && num <= 20) {
+			return getResources().getDrawable(R.drawable.num_10);
+		} else if (num >= 21 && num <= 30) {
+			return getResources().getDrawable(R.drawable.num_20);
+		} else if (num >= 31 && num <= 40) {
+			return getResources().getDrawable(R.drawable.num_30);
+		} else if (num >= 41) {
+			return getResources().getDrawable(R.drawable.num_40);
+		}
+		return null;
+	}
+
+	private void updateNum(LottoNum lottoNum) {
+		num01.setText(String.valueOf(lottoNum.getLuckyNumber1()));
+		num01.setBackgroundDrawable(getNumberBg(lottoNum.getLuckyNumber1()));
+		num02.setText(String.valueOf(lottoNum.getLuckyNumber2()));
+		num02.setBackgroundDrawable(getNumberBg(lottoNum.getLuckyNumber2()));
+		num03.setText(String.valueOf(lottoNum.getLuckyNumber3()));
+		num03.setBackgroundDrawable(getNumberBg(lottoNum.getLuckyNumber3()));
+		num04.setText(String.valueOf(lottoNum.getLuckyNumber4()));
+		num04.setBackgroundDrawable(getNumberBg(lottoNum.getLuckyNumber4()));
+		num05.setText(String.valueOf(lottoNum.getLuckyNumber5()));
+		num05.setBackgroundDrawable(getNumberBg(lottoNum.getLuckyNumber5()));
+		num06.setText(String.valueOf(lottoNum.getLuckyNumber6()));
+		num06.setBackgroundDrawable(getNumberBg(lottoNum.getLuckyNumber6()));
+	}
+
+	class RequestLotto extends AsyncTask<Void, Void, HttpResponse> {
+
+		@Override
+		protected void onPostExecute(HttpResponse result) {
+			if (result == null) {
+				return;
+			}
+
+			LottoResponse response = new LottoResponse(result);
+			LottoNum lottoNum = new LottoNum(response.asJson());
+			T.d(lottoNum.toString());
+			updateNum(lottoNum);
+
+			try {
+				T.d(response.asString());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			super.onPostExecute(result);
+		}
+
+		@Override
+		protected HttpResponse doInBackground(Void... params) {
+			try {
+				return new LottoNumberSao().getLatestNumberSync();
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 	}
 }

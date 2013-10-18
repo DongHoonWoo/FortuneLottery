@@ -36,6 +36,10 @@ public class LottoNumberSao {
 		new RequestLotto().execute(LOTTO645_SITE + API_REQUEST_URL + seq);
 	}
 
+	public HttpResponse getLatestNumberSync() throws ClientProtocolException, IOException {
+		return getHttpClient().execute(new HttpGet(LOTTO645_SITE + API_LATEST_URL));
+	}
+
 	public HttpClient getHttpClient() {
 		try {
 			HttpParams params = new BasicHttpParams();
